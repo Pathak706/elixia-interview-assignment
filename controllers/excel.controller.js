@@ -53,7 +53,7 @@ const importExcel = async function (req, res) {
       const modelData = changeKeyObjects(data, replacements);
       
       let err, excel;
-
+      // TODO: need to validate the date and delivery constrain
       [err, excel] = await to(Excel.bulkCreate(modelData, { updateOnDuplicate: [ "delivery_number" ] }));
       if(err) return ReE(res, err, 422);
       return ReS(res, { message: "excel bulk import done.", excel:modelData }, 201);
