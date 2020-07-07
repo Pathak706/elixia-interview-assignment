@@ -1,0 +1,50 @@
+version: '3.3'
+services:
+    api:
+        build: 
+            dockerfile: ./Dockerfile
+            context: ../elixia-interview-assignment
+        volumes: 
+            - /app/node_modules
+            - ../elixia-interview-assignment:/app
+        environment: 
+            - PORT=5000
+            - DATABASE_HOST=db
+            - DB_NAME='elixia'
+            - DB_USER='root'
+            - DB_PASSWORD='password'
+            - JWT_ENCRYPTION='sfjnklsbgfdfk.213.sdfg'
+            - JWT_EXPIRATION=10000
+        ports: 
+            - 5000:5000
+        depends_on: 
+            - db
+    admin:
+        build: 
+            dockerfile: ./Dockerfile
+            context: ../elixia-interview-assignment-react-client
+        volumes: 
+            - /app/node_modules
+            - ../elixia-interview-assignment-react-client:/app
+        depends_on: 
+            - api
+    nginx:
+        restart: always
+        build: 
+            dockerfile: Dockerfile
+            context: ./nginx
+        ports: 
+            - 80:80
+        depends_on: 
+            - api
+            - admin
+    db:
+        build: 
+            dockerfile: ./Dockerfile.db.dev
+            context: .
+        # Where our data will be persisted
+        volumes:
+            - my-db:/var/lib/mysql
+# Names our volume
+volumes:
+  my-db:
